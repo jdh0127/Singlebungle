@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!-- 긴 이름의 클래스명을 설정 파일에서 간단한 이름으로 사용할 수 있도록 별칭을 지정하는 부분 -->
+<configuration>
+<typeAliases>
+<typeAlias alias="honey" type="Honey.Honey"/>
+<typeAlias alias="whatdo" type="Whatdo.Whatdo"/>
+<typeAlias alias="hobby" type="Whathome.Hobby"/>
+<typeAlias alias="whathome" type="Whathome.Whathome"/>
+<typeAlias alias="whatsell" type="Whatsell.Whatsell"/>
+<typeAlias alias="todaysell" type="BuySell.Todaysell"/>
+<typeAlias alias="comment" type="Whatdo.Comment"/>
+<typeAlias alias="fav" type="spring.FavVO" />
+</typeAliases>
+
+<!-- sql쿼리문 -->
+<mappers>
+<mapper resource="/META-INF/honey.xml"/>
+<mapper resource="/META-INF/whatdo.xml"/>
+<mapper resource="/META-INF/hobby.xml"/>
+<mapper resource="/META-INF/whathome.xml"/>
+<mapper resource="/META-INF/whatsell.xml"/>
+<mapper resource="/META-INF/buysell.xml"/>
+</mappers>
+</configuration>

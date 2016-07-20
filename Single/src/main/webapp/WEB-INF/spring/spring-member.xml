@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+ xmlns:tx="http://www.springframework.org/schema/tx"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:context="http://www.springframework.org/schema/context"
+ xsi:schemaLocation="http://www.springframework.org/schema/beans
+ http://www.springframework.org/schema/beans/spring-beans.xsd
+ http://www.springframework.org/schema/tx
+ http://www.springframework.org/schema/tx/spring-tx.xsd 
+ http://www.springframework.org/schema/context
+ http://www.springframework.org/schema/context/spring-context.xsd ">
+
+<tx:annotation-driven transaction-manager="transactionManager"/>
+<context:annotation-config />
+
+<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+ destroy-method="close">
+<property name="driverClass" value="com.mysql.jdbc.Driver" />
+<property name="jdbcUrl" value="jdbc:mysql://localhost/spring4fs?characterEncoding=utf8&amp;useSSL=false" />
+<property name="user" value="spring4" />
+<property name="password" value="spring4" />
+</bean>
+
+<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+<property name="dataSource" ref="dataSource" />
+</bean>
+
+<!--  Dao -->
+<bean id="memberDao" class="spring.MemberDao">
+	<constructor-arg ref="dataSource" />
+</bean>
+
+ <bean id="honeyDao" class="Honey.HoneyDAO">
+ <property name="factory" ref="sqlSessionFactory"></property>
+</bean> 
+
+<bean id="whatdoDao" class="Whatdo.WhatdoDAO">
+<property name="factory" ref="sqlSessionFactory"></property>
+</bean>
+
+<bean id="whatplaDao" class="Whatdo.WhatplaDAO">
+<property name="factory" ref="sqlSessionFactory"></property>
+</bean>
+
+<bean id="whatsellDao" class="Whatsell.WhatsellDAO">
+<property name="factory" ref="sqlSessionFactory"></property>
+</bean>
+<bean id="whatshareDao" class="Whatsell.WhatshareDAO">
+<property name="factory" ref="sqlSessionFactory"></property>
+</bean>
+
+<bean id="interiorDao" class="Whathome.InteriorDAO">
+<property name="factory" ref="sqlSessionFactory"></property>
+</bean>
+<bean id="homemakeDao" class="Whathome.HomemakeDAO">
+<property name="factory" ref="sqlSessionFactory"></property>
+</bean>
+
+<bean id="hobbyDao" class="Whathome.HobbyDAO">
+<property name="factory" ref="sqlSessionFactory"></property>
+</bean> 
+
+<bean id="TodayfreeDao" class="BuySell.TodayfreeDAO">
+<property name="factory" ref="sqlSessionFactory"></property>
+</bean> 
+
+<bean id="TodaybuyDao" class="BuySell.TodaybuyDAO">
+<property name="factory" ref="sqlSessionFactory"></property>
+</bean> 
+
+<bean id="TodaysellDao" class="BuySell.TodaysellDAO">
+<property name="factory" ref="sqlSessionFactory"></property>
+</bean> 
+
+<bean id="authService" class="spring.AuthService">
+<property name="memberDao" ref="memberDao" />
+</bean>
+
+
+<bean id="memberRegSvc" class="spring.MemberRegisterService">
+<constructor-arg ref="memberDao" />
+</bean>
+
+
+<!-- mybatis를 위한 sqlSessionFactory -->
+<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+<property name="dataSource" ref="dataSource" />
+<property name="configLocation" value="/WEB-INF/spring/mybatis-config.xml" />
+</bean>
+
+<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+<constructor-arg index="0" ref="sqlSessionFactory"></constructor-arg>
+</bean>
+
+</beans>
+

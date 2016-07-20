@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<!-- 각 statement의 네임 스페이스를 지정한 부분 -->
+<mapper namespace="whatsell">
+<!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ세일 -->
+<!-- 전체 글의 개수를 반환 -->
+<select id="selectsale_boardListCount" resultType="int">
+select count(*) from sale_board
+</select>
+
+<!-- 리스트 -->
+<select id="selectsale_boardList" resultType="whatsell" parameterType="int">
+SELECT A.* FROM( SELECT @ROWNUM := @ROWNUM + 1 AS rnum, b.* FROM (select * from sale_board order by mid desc) b, (SELECT @ROWNUM := 0) R) A WHERE A.rnum <![CDATA[>=]]> #{startRcdNo} and A.rnum <![CDATA[<]]> #{endpage}
+</select>
+
+<!-- 뷰 -->
+<select id="selectsale_boardview" resultType="whatsell" parameterType="int">
+select * from sale_board where mid=#{mid}
+</select>
+
+<!-- 글 작성 -->
+<insert id="insertsale_board" parameterType="whatsell" >
+insert into sale_board (title,nick,content,hit,loc,fav,time) values(#{title},#{nick},#{content},0,#{loc},0,#{time})
+</insert>
+
+<!-- 조회수 증가 -->
+<update id="updatesale_boardhit" parameterType="int">
+update sale_board set hit=hit+1 where mid=#{mid}
+</update>
+
+<!-- 글 검색 -->
+<select id="searchsale_board" resultType="whatsell">
+select *
+  from sale_board
+  <if test='search !=null and !search.equalsIgnoreCase("선택")'>
+ where ${search} like #{sec}
+  </if>
+ order by mid desc
+</select>
+
+<!-- 글 수정 -->
+<update id="updatesale_board" parameterType="whatsell">
+update sale_board set title=#{title}, content=#{content}, loc=#{loc} where mid=#{mid}
+</update>
+
+<!-- 글 삭제 -->
+<delete id="deletesale_board" parameterType="whatsell">
+delete from sale_board where mid=#{mid}
+</delete>
+
+<!-- 댓글 보기 -->
+<select id="getCommentListsale_board" resultType="comment">
+select num, writer, content, date from sale_board_comment where ref=#{ref} order by num desc
+</select>
+<!-- 댓글 쓰기 -->
+<insert id="CommentInsertsale_board" parameterType="comment">
+insert into sale_board_comment (ref, writer, content, date) values (#{ref}, #{writer}, #{content}, #{date})
+</insert>
+
+<delete id="CommentDeletesale_board" parameterType="int">
+delete from sale_board_comment where num = #{num}
+</delete>
+
+<update id="CommentUpdatesale_board" parameterType="comment">
+update sale_board_comment set content=#{content} where num = #{num}
+</update>
+
+<!-- 좋아요 기능 구현 -->
+<select id="CheckFavsale_board" parameterType="fav" resultType="int">
+select count(*) from sale_board_favcheck where nick=#{nick} and mid=#{mid}
+</select>
+<insert id="insertFavsale_board" parameterType="fav">
+insert into sale_board_favcheck values(#{nick}, #{mid})
+</insert>
+<delete id="deleteFavsale_board" parameterType="fav">
+delete from sale_board_favcheck where nick=#{nick} and mid=#{mid}
+</delete>
+<update id="Likesale_board" parameterType="int">
+update sale_board set fav = fav+1 where mid = #{mid}
+</update>
+<update id="CancelLikesale_board" parameterType="int">
+update sale_board set fav = fav-1 where mid=#{mid}
+</update>
+
+
+<!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ쇼핑공유 -->
+<!-- 전체 글의 개수를 반환 -->
+<select id="selectsaleshare_boardListCount" resultType="int">
+select count(*) from saleshare_board
+</select>
+
+<!-- 리스트 -->
+<select id="selectsaleshare_boardList" resultType="whatsell" parameterType="int">
+SELECT A.* FROM( SELECT @ROWNUM := @ROWNUM + 1 AS rnum, b.* FROM (select * from saleshare_board order by mid desc) b, (SELECT @ROWNUM := 0) R) A WHERE A.rnum <![CDATA[>=]]> #{startRcdNo} and A.rnum <![CDATA[<]]> #{endpage}
+</select>
+
+<!-- 뷰 -->
+<select id="selectsaleshare_boardview" resultType="whatsell" parameterType="int">
+select * from saleshare_board where mid=#{mid}
+</select>
+
+<!-- 글 작성 -->
+<insert id="insertsaleshare_board" parameterType="whatsell" >
+insert into saleshare_board (title,nick,content,hit,loc,fav,time) values(#{title},#{nick},#{content},0,#{loc},0,#{time})
+</insert>
+
+<!-- 조회수 증가 -->
+<update id="updatesaleshare_boardhit" parameterType="int">
+update saleshare_board set hit=hit+1 where mid=#{mid}
+</update>
+
+<!-- 글 검색 -->
+<select id="searchsaleshare_board" parameterType="String" resultType="whatsell">
+select *
+  from saleshare_board
+  <if test='search !=null and !search.equalsIgnoreCase("선택")'>
+ where ${search} like #{sec}
+  </if>
+ order by mid desc
+</select>
+
+<!-- 글 수정 -->
+<update id="updatesaleshare_board" parameterType="whatsell">
+update saleshare_board set title=#{title}, content=#{content}, loc=#{loc} where mid=#{mid}
+</update>
+
+<!-- 글 삭제 -->
+<delete id="deletesaleshare_board" parameterType="whatsell">
+delete from saleshare_board where mid=#{mid}
+</delete>
+<!-- 댓글 보기 -->
+<select id="getCommentListshare_board" resultType="comment">
+select num, writer, content, date from saleshare_board_comment where ref=#{ref} order by num desc
+</select>
+<!-- 댓글 쓰기 -->
+<insert id="CommentInsertshare_board" parameterType="comment">
+insert into saleshare_board_comment (ref, writer, content, date) values (#{ref}, #{writer}, #{content}, #{date})
+</insert>
+
+<delete id="CommentDeleteshare_board" parameterType="int">
+delete from saleshare_board_comment where num = #{num}
+</delete>
+
+<update id="CommentUpdateshare_board" parameterType="comment">
+update saleshare_board_comment set content=#{content} where num = #{num}
+</update>
+
+<!-- 좋아요 기능 구현 -->
+<select id="CheckFavshare_board" parameterType="fav" resultType="int">
+select count(*) from saleshare_board_favcheck where nick=#{nick} and mid=#{mid}
+</select>
+<insert id="insertFavshare_board" parameterType="fav">
+insert into saleshare_board_favcheck values(#{nick}, #{mid})
+</insert>
+<delete id="deleteFavshare_board" parameterType="fav">
+delete from saleshare_board_favcheck where nick=#{nick} and mid=#{mid}
+</delete>
+<update id="Likeshare_board" parameterType="int">
+update saleshare_board set fav = fav+1 where mid = #{mid}
+</update>
+<update id="CancelLikeshare_board" parameterType="int">
+update saleshare_board set fav = fav-1 where mid=#{mid}
+</update>
+
+</mapper>

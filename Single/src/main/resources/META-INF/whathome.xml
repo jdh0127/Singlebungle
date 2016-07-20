@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<!-- 각 statement의 네임 스페이스를 지정한 부분 -->
+<mapper namespace="whathome">
+<!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ인테리어 -->
+<!-- 전체 글의 개수를 반환 -->
+<select id="selectinterior_boardListCount" resultType="int">
+select count(*) from interior_board
+</select>
+
+<!-- 리스트 -->
+<select id="selectinterior_boardList" resultType="whathome">
+SELECT A.* FROM( SELECT @ROWNUM := @ROWNUM + 1 AS rnum, b.* FROM (select * from interior_board order by mid desc) b, (SELECT @ROWNUM := 0) R) A WHERE A.rnum <![CDATA[>=]]> #{startRcdNo} and A.rnum <![CDATA[<]]> #{endpage}
+</select>
+
+<!-- 뷰 -->
+<select id="selectinterior_boardview" resultType="whathome" parameterType="int">
+select * from interior_board where mid=#{mid}
+</select>
+
+<!-- 글 작성 -->
+<insert id="insertinterior_board" parameterType="whathome" >
+insert into interior_board (title,nick,content,hit,fav,time) values(#{title},#{nick},#{content},0,0,#{time})
+</insert>
+
+<!-- 조회수 증가 -->
+<update id="updateinterior_boardhit" parameterType="int">
+update interior_board set hit=hit+1 where mid=#{mid}
+</update>
+
+<!-- 글 검색 -->
+<select id="searchinterior_board" resultType="whathome">
+select *
+  from interior_board
+  <if test='search !=null and !search.equalsIgnoreCase("선택")'>
+ where ${search} like #{sec}
+  </if>
+ order by mid desc
+</select>
+
+<!-- 글 수정 -->
+<update id="updateinterior_board" parameterType="whathome">
+update interior_board set title=#{title}, content=#{content} where mid=#{mid}
+</update>
+
+<!-- 글 삭제 -->
+<delete id="deleteinterior_board" parameterType="whathome">
+delete from interior_board where mid=#{mid}
+</delete>
+
+<!-- 댓글 보기 -->
+<select id="getCommentListinterior_board" resultType="comment">
+select num, writer, content, date from interior_board_comment where ref=#{ref} order by num desc
+</select>
+<!-- 댓글 쓰기 -->
+<insert id="CommentInsertinterior_board" parameterType="comment">
+insert into interior_board_comment (ref, writer, content, date) values (#{ref}, #{writer}, #{content}, #{date})
+</insert>
+
+<delete id="CommentDeleteinterior_board" parameterType="int">
+delete from interior_board_comment where num = #{num}
+</delete>
+
+<update id="CommentUpdateinterior_board" parameterType="comment">
+update interior_board_comment set content=#{content} where num = #{num}
+</update>
+
+<!-- 좋아요 기능 구현 -->
+<select id="CheckFavinterior_board" parameterType="fav" resultType="int">
+select count(*) from interior_board_favcheck where nick=#{nick} and mid=#{mid}
+</select>
+<insert id="insertFavinterior_board" parameterType="fav">
+insert into interior_board_favcheck values(#{nick}, #{mid})
+</insert>
+<delete id="deleteFavinterior_board" parameterType="fav">
+delete from interior_board_favcheck where nick=#{nick} and mid=#{mid}
+</delete>
+<update id="Likeinterior_board" parameterType="int">
+update interior_board set fav = fav+1 where mid = #{mid}
+</update>
+<update id="CancelLikeinterior_board" parameterType="int">
+update interior_board set fav = fav-1 where mid=#{mid}
+</update>
+
+
+<!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ집밥 -->
+<!-- 전체 글의 개수를 반환 -->
+<select id="selecthomemake_boardListCount" resultType="int">
+select count(*) from homemake_board
+</select>
+
+<!-- 리스트 -->
+<select id="selecthomemake_boardList" resultType="whathome">
+SELECT A.* FROM( SELECT @ROWNUM := @ROWNUM + 1 AS rnum, b.* FROM (select * from homemake_board order by mid desc) b, (SELECT @ROWNUM := 0) R) A WHERE A.rnum <![CDATA[>=]]> #{startRcdNo} and A.rnum <![CDATA[<]]> #{endpage}
+</select>
+
+<!-- 뷰 -->
+<select id="selecthomemake_boardview" resultType="whathome" parameterType="int">
+select * from homemake_board where mid=#{mid}
+</select>
+
+<!-- 글 작성 -->
+<insert id="inserthomemake_board" parameterType="whathome" >
+insert into homemake_board (title,nick,content,hit,fav,time) values(#{title},#{nick},#{content},0,0,#{time})
+</insert>
+
+<!-- 조회수 증가 -->
+<update id="updatehomemake_boardhit" parameterType="int">
+update homemake_board set hit=hit+1 where mid=#{mid}
+</update>
+
+<!-- 글 검색 -->
+<select id="searchhomemake_board" resultType="whathome">
+select *
+  from homemake_board
+  <if test='search !=null and !search.equalsIgnoreCase("선택")'>
+ where ${search} like #{sec}
+  </if>
+ order by mid desc
+</select>
+
+<!-- 글 수정 -->
+<update id="updatehomemake_board" parameterType="whathome">
+update homemake_board set title=#{title}, content=#{content} where mid=#{mid}
+</update>
+
+<!-- 글 삭제 -->
+<delete id="deletehomemake_board" parameterType="whathome">
+delete from homemake_board where mid=#{mid}
+</delete>
+
+<!-- 댓글 보기 -->
+<select id="getCommentListhomemake_board" resultType="comment">
+select num, writer, content, date from homemake_board_comment where ref=#{ref} order by num desc
+</select>
+<!-- 댓글 쓰기 -->
+<insert id="CommentInserthomemake_board" parameterType="comment">
+insert into homemake_board_comment (ref, writer, content, date) values (#{ref}, #{writer}, #{content}, #{date})
+</insert>
+
+<delete id="CommentDeletehomemake_board" parameterType="int">
+delete from homemake_board_comment where num = #{num}
+</delete>
+
+<update id="CommentUpdatehomemake_board" parameterType="comment">
+update homemake_board_comment set content=#{content} where num = #{num}
+</update>
+
+<!-- 좋아요 기능 구현 -->
+<select id="CheckFavhomemake_board" parameterType="fav" resultType="int">
+select count(*) from homemake_board_favcheck where nick=#{nick} and mid=#{mid}
+</select>
+<insert id="insertFavhomemake_board" parameterType="fav">
+insert into homemake_board_favcheck values(#{nick}, #{mid})
+</insert>
+<delete id="deleteFavhomemake_board" parameterType="fav">
+delete from homemake_board_favcheck where nick=#{nick} and mid=#{mid}
+</delete>
+<update id="Likehomemake_board" parameterType="int">
+update homemake_board set fav = fav+1 where mid = #{mid}
+</update>
+<update id="CancelLikehomemake_board" parameterType="int">
+update homemake_board set fav = fav-1 where mid=#{mid}
+</update>
+
+</mapper>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<!-- 각 statement의 네임 스페이스를 지정한 부분 -->
+<mapper namespace="whatdo">
+<!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ혼자 먹을 식당 -->
+<!-- 전체 글의 개수를 반환 -->
+<select id="selectres_boardListCount" resultType="int">
+select count(*) from res_board
+</select>
+
+<!-- 리스트 -->
+<select id="selectres_boardList" resultType="whatdo">
+SELECT A.* FROM( SELECT @ROWNUM := @ROWNUM + 1 AS rnum, b.* FROM (select * from res_board order by mid desc) b, (SELECT @ROWNUM := 0) R) A WHERE A.rnum <![CDATA[>=]]> #{startRcdNo} and A.rnum <![CDATA[<]]> #{endpage}
+</select>
+
+<!-- 뷰 -->
+<select id="selectres_boardview" resultType="whatdo" parameterType="int">
+select * from res_board where mid=#{mid}
+</select>
+
+<!-- 글 작성 -->
+<insert id="insertres_board" parameterType="whatdo" >
+insert into res_board (title,nick,content,hit,loc,fav,time) values(#{title},#{nick},#{content},0,#{loc},0,#{time})
+</insert>
+
+<!-- 조회수 증가 -->
+<update id="updateres_boardhit" parameterType="int">
+update res_board set hit=hit+1 where mid=#{mid}
+</update>
+
+<!-- 글 검색 -->
+<select id="searchres_board" resultType="whatdo">
+select *
+  from res_board
+  <if test='search !=null and !search.equalsIgnoreCase("선택")'>
+ where ${search} like #{sec}
+  </if>
+ order by mid desc
+</select>
+
+<!-- 글 수정 -->
+<update id="updateres_board" parameterType="whatdo">
+update res_board set title=#{title}, content=#{content}, loc=#{loc} where mid=#{mid}
+</update>
+
+<!-- 글 삭제 -->
+<delete id="deleteres_board" parameterType="whatdo">
+delete from res_board where mid=#{mid}
+</delete>
+
+<!-- 댓글 보기 -->
+<select id="getCommentListres_board" resultType="comment">
+select num, writer, content, date from res_board_comment where ref=#{ref} order by num desc
+</select>
+<!-- 댓글 쓰기 -->
+<insert id="CommentInsertres_board" parameterType="comment">
+insert into res_board_comment (ref, writer, content, date) values (#{ref}, #{writer}, #{content}, #{date})
+</insert>
+
+<delete id="CommentDeleteres_board" parameterType="int">
+delete from res_board_comment where num = #{num}
+</delete>
+
+<update id="CommentUpdateres_board" parameterType="comment">
+update res_board_comment set content=#{content} where num = #{num}
+</update>
+
+<!-- 좋아요 기능 구현 -->
+<select id="CheckFavres_board" parameterType="fav" resultType="int">
+select count(*) from res_board_favcheck where nick=#{nick} and mid=#{mid}
+</select>
+<insert id="insertFavres_board" parameterType="fav">
+insert into res_board_favcheck values(#{nick}, #{mid})
+</insert>
+<delete id="deleteFavres_board" parameterType="fav">
+delete from res_board_favcheck where nick=#{nick} and mid=#{mid}
+</delete>
+<update id="Likeres_board" parameterType="int">
+update res_board set fav = fav+1 where mid = #{mid}
+</update>
+<update id="CancelLikeres_board" parameterType="int">
+update res_board set fav = fav-1 where mid=#{mid}
+</update>
+
+
+<!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ혼자 놀 장소 -->
+<!-- 전체 글의 개수를 반환 -->
+<select id="selectpla_boardListCount" resultType="int">
+select count(*) from pla_board
+</select>
+
+<!-- 리스트 -->
+<select id="selectpla_boardList" resultType="whatdo">
+SELECT A.* FROM( SELECT @ROWNUM := @ROWNUM + 1 AS rnum, b.* FROM (select * from pla_board order by mid desc) b, (SELECT @ROWNUM := 0) R) A WHERE A.rnum <![CDATA[>=]]> #{startRcdNo} and A.rnum <![CDATA[<]]> #{endpage}
+</select>
+
+<!-- 뷰 -->
+<select id="selectpla_boardview" resultType="whatdo" parameterType="int">
+select * from pla_board where mid=#{mid}
+</select>
+
+<!-- 글 작성 -->
+<insert id="insertpla_board" parameterType="whatdo" >
+insert into pla_board (title,nick,content,hit,loc,fav,time) values(#{title},#{nick},#{content},0,#{loc},0,#{time})
+</insert>
+
+<!-- 조회수 증가 -->
+<update id="updatepla_boardhit" parameterType="int">
+update pla_board set hit=hit+1 where mid=#{mid}
+</update>
+
+<!-- 글 검색 -->
+<select id="searchpla_board" resultType="whatdo">
+select *
+  from pla_board
+  <if test='search !=null and !search.equalsIgnoreCase("선택")'>
+ where ${search} like #{sec}
+  </if>
+ order by mid desc
+</select>
+
+<!-- 글 수정 -->
+<update id="updatepla_board" parameterType="whatdo">
+update pla_board set title=#{title}, content=#{content}, loc=#{loc} where mid=#{mid}
+</update>
+
+<!-- 글 삭제 -->
+<delete id="deletepla_board" parameterType="whatdo">
+delete from pla_board where mid=#{mid}
+</delete>
+
+<!-- 댓글 보기 -->
+<select id="getCommentListpla_board" resultType="comment">
+select num, writer, content, date from pla_board_comment where ref=#{ref} order by num desc
+</select>
+<!-- 댓글 쓰기 -->
+<insert id="CommentInsertpla_board" parameterType="comment">
+insert into pla_board_comment (ref, writer, content, date) values (#{ref}, #{writer}, #{content}, #{date})
+</insert>
+
+<delete id="CommentDeletepla_board" parameterType="int">
+delete from pla_board_comment where num = #{num}
+</delete>
+
+<update id="CommentUpdatepla_board" parameterType="comment">
+update pla_board_comment set content=#{content} where num = #{num}
+</update>
+
+<!-- 좋아요 기능 구현 -->
+<select id="CheckFavpla_board" parameterType="fav" resultType="int">
+select count(*) from pla_board_favcheck where nick=#{nick} and mid=#{mid}
+</select>
+<insert id="insertFavpla_board" parameterType="fav">
+insert into pla_board_favcheck values(#{nick}, #{mid})
+</insert>
+<delete id="deleteFavpla_board" parameterType="fav">
+delete from pla_board_favcheck where nick=#{nick} and mid=#{mid}
+</delete>
+<update id="Likepla_board" parameterType="int">
+update pla_board set fav = fav+1 where mid = #{mid}
+</update>
+<update id="CancelLikepla_board" parameterType="int">
+update pla_board set fav = fav-1 where mid=#{mid}
+</update>
+
+</mapper>

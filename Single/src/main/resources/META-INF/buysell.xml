@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<!-- 각 statement의 네임 스페이스를 지정한 부분 -->
+<mapper namespace="todaysell">
+<!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ무료나눔 -->
+<!-- 전체 글의 개수를 반환 -->
+<select id="selecttodayfreeListCount" resultType="int">
+select count(*) from todayfree
+</select>
+
+<!-- 리스트 -->
+<select id="selecttodayfreeList" resultType="todaysell">
+SELECT A.* FROM( SELECT @ROWNUM := @ROWNUM + 1 AS rnum, b.* FROM (select * from todayfree order by mid desc) b, (SELECT @ROWNUM := 0) R) A WHERE A.rnum <![CDATA[>=]]> #{startRcdNo} and A.rnum <![CDATA[<]]> #{endpage}
+</select>
+
+<!-- 뷰 -->
+<select id="selecttodayfreeview" resultType="todaysell" parameterType="int">
+select * from todayfree where mid=#{mid}
+</select>
+
+<!-- 글 작성 -->
+<insert id="inserttodayfree" parameterType="todaysell" >
+insert into todayfree (title,nick,content,hit,loc,fav,time) values(#{title},#{nick},#{content},0,#{loc},0,#{time})
+</insert>
+
+<!-- 조회수 증가 -->
+<update id="updatetodayfreehit" parameterType="int">
+update todayfree set hit=hit+1 where mid=#{mid}
+</update>
+
+<!-- 글 검색 -->
+<select id="searchtodayfree" resultType="todaysell">
+select *
+  from todayfree
+  <if test='search !=null and !search.equalsIgnoreCase("선택")'>
+ where ${search} like #{sec}
+  </if>
+ order by mid desc
+</select>
+
+<!-- 글 수정 -->
+<update id="updatetodayfree" parameterType="todaysell">
+update todayfree set title=#{title}, content=#{content}, loc=#{loc} where mid=#{mid}
+</update>
+
+<!-- 글 삭제 -->
+<delete id="deletetodayfree" parameterType="todaysell">
+delete from todayfree where mid=#{mid}
+</delete>
+
+<!-- 댓글 보기 -->
+<select id="getCommentListtodayfree_board" resultType="comment">
+select num, writer, content, date from todayfree_comment where ref=#{ref} order by num desc
+</select>
+<!-- 댓글 쓰기 -->
+<insert id="CommentInserttodayfree_board" parameterType="comment">
+insert into todayfree_comment (ref, writer, content, date) values (#{ref}, #{writer}, #{content}, #{date})
+</insert>
+
+<delete id="CommentDeletetodayfree_board" parameterType="int">
+delete from todayfree_comment where num = #{num}
+</delete>
+
+<update id="CommentUpdatetodayfree_board" parameterType="comment">
+update todayfree_comment set content=#{content} where num = #{num}
+</update>
+
+<!-- 좋아요 기능 구현 -->
+<select id="CheckFavtodayfree_board" parameterType="fav" resultType="int">
+select count(*) from todayfree_favcheck where nick=#{nick} and mid=#{mid}
+</select>
+<insert id="insertFavtodayfree_board" parameterType="fav">
+insert into todayfree_favcheck values(#{nick}, #{mid})
+</insert>
+<delete id="deleteFavtodayfree_board" parameterType="fav">
+delete from todayfree_favcheck where nick=#{nick} and mid=#{mid}
+</delete>
+<update id="LikeTodayfree" parameterType="int">
+update todayfree set fav = fav+1 where mid = #{mid}
+</update>
+<update id="CancelLikeTodayfree" parameterType="int">
+update todayfree set fav = fav-1 where mid=#{mid}
+</update>
+
+
+<!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ삽니다 -->
+<!-- 전체 글의 개수를 반환 -->
+<select id="selecttodaybuyListCount" resultType="int">
+select count(*) from todaybuy
+</select>
+
+<!-- 리스트 -->
+<select id="selecttodaybuyList" resultType="todaysell" parameterType="int">
+SELECT A.* FROM( SELECT @ROWNUM := @ROWNUM + 1 AS rnum, b.* FROM (select * from todaybuy order by mid desc) b, (SELECT @ROWNUM := 0) R) A WHERE A.rnum <![CDATA[>=]]> #{startRcdNo} and A.rnum <![CDATA[<]]> #{endpage}
+</select>
+
+<!-- 뷰 -->
+<select id="selecttodaybuyview" resultType="todaysell" parameterType="int">
+select * from todaybuy where mid=#{mid}
+</select>
+
+<!-- 글 작성 -->
+<insert id="inserttodaybuy" parameterType="todaysell" >
+insert into todaybuy (title,nick,content,hit,loc,fav,time) values(#{title},#{nick},#{content},0,#{loc},0,#{time})
+</insert>
+
+<!-- 조회수 증가 -->
+<update id="updatetodaybuyhit" parameterType="int">
+update todaybuy set hit=hit+1 where mid=#{mid}
+</update>
+
+<!-- 글 검색 -->
+<select id="searchtodaybuy" resultType="todaysell">
+select *
+  from todaybuy
+  <if test='search !=null and !search.equalsIgnoreCase("선택")'>
+ where ${search} like #{sec}
+  </if>
+ order by mid desc
+</select>
+
+<!-- 글 수정 -->
+<update id="updatetodaybuy" parameterType="todaysell">
+update todaybuy set title=#{title}, content=#{content}, loc=#{loc} where mid=#{mid}
+</update>
+
+<!-- 글 삭제 -->
+<delete id="deletetodaybuy" parameterType="todaysell">
+delete from todaybuy where mid=#{mid}
+</delete>
+
+<!-- 댓글 보기 -->
+<select id="getCommentListtodaybuy_board" resultType="comment">
+select num, writer, content, date from todaybuy_comment where ref=#{ref} order by num desc
+</select>
+<!-- 댓글 쓰기 -->
+<insert id="CommentInserttodaybuy_board" parameterType="comment">
+insert into todaybuy_comment (ref, writer, content, date) values (#{ref}, #{writer}, #{content}, #{date})
+</insert>
+
+<delete id="CommentDeletetodaybuy_board" parameterType="int">
+delete from todaybuy_comment where num = #{num}
+</delete>
+
+<update id="CommentUpdatetodaybuy_board" parameterType="comment">
+update todaybuy_comment set content=#{content} where num = #{num}
+</update>
+
+<!-- 좋아요 기능 구현 -->
+<select id="CheckFavtodaybuy_board" parameterType="fav" resultType="int">
+select count(*) from todaybuy_favcheck where nick=#{nick} and mid=#{mid}
+</select>
+<insert id="insertFavtodaybuy_board" parameterType="fav">
+insert into todaybuy_favcheck values(#{nick}, #{mid})
+</insert>
+<delete id="deleteFavtodaybuy_board" parameterType="fav">
+delete from todaybuy_favcheck where nick=#{nick} and mid=#{mid}
+</delete>
+<update id="LikeTodaybuy" parameterType="int">
+update todaybuy set fav = fav+1 where mid = #{mid}
+</update>
+<update id="CancelLikeTodaybuy" parameterType="int">
+update todaybuy set fav = fav-1 where mid=#{mid}
+</update>
+
+
+<!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ팝니다 -->
+<!-- 전체 글의 개수를 반환 -->
+<select id="selecttodaysellListCount" resultType="int">
+select count(*) from todaysell
+</select>
+
+<!-- 리스트 -->
+<select id="selecttodaysellList" resultType="todaysell" parameterType="int">
+SELECT A.* FROM( SELECT @ROWNUM := @ROWNUM + 1 AS rnum, b.* FROM (select * from todaysell order by mid desc) b, (SELECT @ROWNUM := 0) R) A WHERE A.rnum <![CDATA[>=]]> #{startRcdNo} and A.rnum <![CDATA[<]]> #{endpage}
+</select>
+
+<!-- 뷰 -->
+<select id="selecttodaysellview" resultType="todaysell" parameterType="int">
+select mid, title, nick, content, hit, loc, fav, time from todaysell where mid=#{mid}
+</select>
+
+<!-- 글 작성 -->
+<insert id="inserttodaysell" parameterType="todaysell" >
+insert into todaysell (title,nick,content,hit,loc,fav,time) values(#{title},#{nick},#{content},0,#{loc},0,#{time})
+</insert>
+
+<!-- 조회수 증가 -->
+<update id="updatetodaysellhit" parameterType="int">
+update todaysell set hit=hit+1 where mid=#{mid}
+</update>
+
+<!-- 글 검색 -->
+<select id="searchtodaysell" resultType="todaysell">
+select *
+  from todaysell
+  <if test='search !=null and !search.equalsIgnoreCase("선택")'>
+ where ${search} like #{sec}
+  </if>
+ order by mid desc
+</select>
+
+<!-- 글 수정 -->
+<update id="updatetodaysell" parameterType="todaysell">
+update todaysell set title=#{title}, content=#{content}, loc=#{loc} where mid=#{mid}
+</update>
+
+<!-- 글 삭제 -->
+<delete id="deletetodaysell" parameterType="todaysell">
+delete from todaysell where mid=#{mid}
+</delete>
+<!-- 댓글 보기 -->
+<select id="getCommentListtodaysell_board" resultType="comment">
+select num, writer, content, date from todaysell_comment where ref=#{ref} order by num desc
+</select>
+<!-- 댓글 쓰기 -->
+<insert id="CommentInserttodaysell_board" parameterType="comment">
+insert into todaysell_comment (ref, writer, content, date) values (#{ref}, #{writer}, #{content}, #{date})
+</insert>
+
+<delete id="CommentDeletetodaysell_board" parameterType="int">
+delete from todaysell_comment where num = #{num}
+</delete>
+
+<update id="CommentUpdatetodaysell_board" parameterType="comment">
+update todaysell_comment set content=#{content} where num = #{num}
+</update>
+
+<!-- 좋아요 기능 구현 -->
+<select id="CheckFavtodaysell_board" parameterType="fav" resultType="int">
+select count(*) from todaysell_favcheck where nick=#{nick} and mid=#{mid}
+</select>
+<insert id="insertFavtodaysell_board" parameterType="fav">
+insert into todaysell_favcheck values(#{nick}, #{mid})
+</insert>
+<delete id="deleteFavtodaysell_board" parameterType="fav">
+delete from todaysell_favcheck where nick=#{nick} and mid=#{mid}
+</delete>
+<update id="LikeTodaysell" parameterType="int">
+update todaysell set fav = fav+1 where mid = #{mid}
+</update>
+<update id="CancelLikeTodaysell" parameterType="int">
+update todaysell set fav = fav-1 where mid=#{mid}
+</update>
+</mapper>
+

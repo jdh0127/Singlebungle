@@ -1,0 +1,13 @@
+eclipse.preferences.version=1
+encoding//src/main/java/Controller/HobbyController.java=UTF-8
+encoding//src/main/java/Controller/HoneyController.java=UTF-8
+encoding//src/main/java/Controller/TodayfreeController.java=UTF-8
+encoding//src/main/java/Controller/WhatdoController.java=UTF-8
+encoding//src/main/java/Controller/WhathomeController.java=UTF-8
+encoding//src/main/java/Controller/WhatsellController.java=UTF-8
+encoding//src/main/java/Honey/HoneyDAO.java=UTF-8
+encoding//src/main/resources/message/label.properties=UTF-8
+encoding//src/main/webapp/WEB-INF/views/Board/hub.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/views/Board/hub2.jsp=UTF-8
+encoding//src/main/webapp/ajax/category-data.html=UTF-8
+encoding//src/main/webapp/js/category-data.html=UTF-8

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<!-- 각 statement의 네임 스페이스를 지정한 부분 -->
+<mapper namespace="hobby">
+<!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ취미 -->
+<!-- 전체 글의 개수를 반환 -->
+<select id="selecthobbyListCount" resultType="int">
+select count(*) from hobby
+</select>
+
+<!-- 리스트 -->
+<select id="selecthobbyList" resultType="hobby">
+SELECT A.* FROM( SELECT @ROWNUM := @ROWNUM + 1 AS rnum, b.* FROM (select * from hobby order by mid desc) b, (SELECT @ROWNUM := 0) R) A WHERE A.rnum <![CDATA[>=]]> #{startRcdNo} and A.rnum <![CDATA[<]]> #{endpage}
+</select>
+
+<!-- 뷰 -->
+<select id="selecthobbyview" resultType="hobby" parameterType="int">
+select * from hobby where mid=#{mid}
+</select>
+
+<!-- 글 작성 -->
+<insert id="inserthobby" parameterType="hobby" >
+insert into hobby (title,nick,sort,content,hit,fav,time) values(#{title},#{nick},#{sort},#{content},0,0,#{time})
+</insert>
+
+<!-- 조회수 증가 -->
+<update id="updatehobbyhit" parameterType="int">
+update hobby set hit=hit+1 where mid=#{mid}
+</update>
+
+<!-- 글 검색 -->
+<select id="searchhobby" resultType="hobby">
+select *
+  from hobby
+  <if test='search !=null and !search.equalsIgnoreCase("선택")'>
+ where ${search} like #{sec}
+  </if>
+ order by mid desc
+</select>
+
+<!-- 글 수정 -->
+<update id="updatehobby" parameterType="hobby">
+update hobby set title=#{title}, sort=#{sort}, content=#{content} where mid=#{mid}
+</update>
+
+<!-- 글 삭제 -->
+<delete id="deletehobby" parameterType="hobby">
+delete from hobby where mid=#{mid}
+</delete>
+
+<!-- 댓글 보기 -->
+<select id="getCommentListhobby_board" resultType="comment">
+select num, writer, content, date from hobby_comment where ref=#{ref} order by num desc
+</select>
+<!-- 댓글 쓰기 -->
+<insert id="CommentInserthobby_board" parameterType="comment">
+insert into hobby_comment (ref, writer, content, date) values (#{ref}, #{writer}, #{content}, #{date})
+</insert>
+
+<delete id="CommentDeletehobby_board" parameterType="int">
+delete from hobby_comment where num = #{num}
+</delete>
+
+<update id="CommentUpdatehobby_board" parameterType="comment">
+update hobby_comment set content=#{content} where num = #{num}
+</update>
+
+<!-- 좋아요 기능 구현 -->
+<select id="CheckFavhobby_board" parameterType="fav" resultType="int">
+select count(*) from hobby_favcheck where nick=#{nick} and mid=#{mid}
+</select>
+<insert id="insertFavhobby_board" parameterType="fav">
+insert into hobby_favcheck values(#{nick}, #{mid})
+</insert>
+<delete id="deleteFavhobby_board" parameterType="fav">
+delete from hobby_favcheck where nick=#{nick} and mid=#{mid}
+</delete>
+<update id="Likehobby_board" parameterType="int">
+update hobby set fav = fav+1 where mid = #{mid}
+</update>
+<update id="CancelLikehobby_board" parameterType="int">
+update hobby set fav = fav-1 where mid=#{mid}
+</update>
+
+</mapper>
